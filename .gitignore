@@ -1,0 +1,31 @@
+# Environment
+.env
+.env.local
+
+# Data (include sample, exclude large files)
+data/*.jsonl
+data/*.json
+!data/sample.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+ENV/
+env/
+.venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
