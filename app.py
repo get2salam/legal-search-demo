@@ -199,6 +199,30 @@ def main():
         st.markdown(f"### Found {len(results)} results")
         
         if results:
+            # Export options
+            col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
+            with col2:
+                st.download_button(
+                    "📄 JSON",
+                    data=export_results(results, "json"),
+                    file_name="search_results.json",
+                    mime="application/json"
+                )
+            with col3:
+                st.download_button(
+                    "📊 CSV",
+                    data=export_results(results, "csv"),
+                    file_name="search_results.csv",
+                    mime="text/csv"
+                )
+            with col4:
+                st.download_button(
+                    "📋 Citations",
+                    data=export_results(results, "citations"),
+                    file_name="citations.txt",
+                    mime="text/plain"
+                )
+            
             for case in results:
                 render_case_card(case)
         else:
@@ -212,6 +236,28 @@ def main():
         recent = engine.get_recent(10)
         for case in recent:
             render_case_card(case, show_relevance=False)
+
+
+def export_results(results: list, format: str = "json"):
+    """Export search results to various formats."""
+    import csv
+    from io import StringIO
+    
+    if format == "json":
+        return json.dumps(results, indent=2, ensure_ascii=False)
+    elif format == "csv":
+        if not results:
+            return ""
+        buffer = StringIO()
+        fieldnames = ['citation', 'title', 'court', 'date', 'headnote']
+        writer = csv.DictWriter(buffer, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writeheader()
+        for r in results:
+            writer.writerow(r)
+        return buffer.getvalue()
+    elif format == "citations":
+        return "\n".join([r.get('citation', '') for r in results if r.get('citation')])
+    return ""
 
 
 def render_case_card(case: dict, show_relevance: bool = True):
